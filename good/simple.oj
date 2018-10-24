@@ -1,0 +1,49 @@
+/* Checking all types */
+register counter1 as Int;
+register counter2 as Int;
+register falsifiable as Bool;
+register testObj as Obj |counter1, counter2, str_print|;
+
+func main Bool || {
+	add testObj;
+	.testObj = construct counter1 = 16, counter2 = 15, str_print = 'X';
+	if test1 (.testObj) |testObj| {
+		print (.testObj);
+	} else || {};
+	if test2 (.testObj) |testObj| {
+		print (.testObj);
+	} else || {};
+	if test3 (.testObj) |testObj| {
+		print (.testObj);
+	} else || {};
+	.testObj.str_print = '\n';
+	print(.testObj);
+	return True;
+};
+
+// Proste operacje boolowskie
+func test1 Bool |counter1, counter2, str_print| {
+	.str_print = 'A';
+	return .counter1 > .counter2;
+};
+
+// Proste  instrukcje blokowe tekstu
+func test2 Bool |counter1, str_print| {
+	.str_print = 'B';
+	.counter1 = 1;
+	with @ |counter1| {
+		.counter1 = 2;
+	};
+	return .counter1 > 1;
+};
+
+func test3 Bool |counter2, counter1, str_print| {
+	.str_print = 'C';
+	.counter1 = 0 - 1;
+	if .counter1 < 0 |counter2| {
+		.counter2 = 4;
+	} else  |counter2| {
+		.counter2 = 3;
+	};
+	return .counter2 == 4;
+};

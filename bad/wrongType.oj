@@ -1,0 +1,13 @@
+/*
+	Catched wrong type error
+*/
+func main Bool || {
+	add base_errno;
+	add base_counter;
+	add str_print;
+	.base_counter = True;
+	.base_counter = .base_errno + 64;
+	.str_print = intToChar (@);
+	print(@);
+	return True;
+};

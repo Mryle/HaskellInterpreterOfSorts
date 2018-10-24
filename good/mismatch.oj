@@ -1,0 +1,20 @@
+
+register ts_obj as Obj ||;
+
+
+func main Bool || {
+	local ts_int as Int;
+	.ts_int = 2;
+	add ts_obj;
+	.ts_obj = construct str_print = 'A';
+	add base_counter;
+	.base_counter = .ts_int;
+	with .ts_obj |str_print| {
+		print(@);
+		add base_counter;
+		.base_counter = .base_prev.base_counter + 97;
+		.str_print = intToChar(@);
+		print(@);
+	};
+	.ts_int = .base_counter;
+};

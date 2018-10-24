@@ -1,0 +1,5 @@
+register ts_obj as Obj |str_print, base_counter|;
+
+func nomain Bool || {
+	return True;
+};

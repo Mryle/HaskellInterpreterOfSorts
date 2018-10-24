@@ -1,0 +1,32 @@
+register ts_func as Func Void ||;
+
+func invoke Void |ts_func| {
+	.ts_func(@);
+	return Null;
+};
+
+func main Bool || {
+	add ts_func;
+	.ts_func = func Void || {
+		add str_print;
+		.str_print = 'A';
+		print(@);
+		return Null;
+	};
+	invoke(@);
+	.ts_func = func Void || {
+		add str_print;
+		.str_print = 'B';
+		print(@);
+		return Null;
+	};
+	invoke(@);
+	.ts_func = func Void || {
+		add str_print;
+		.str_print = 'C';
+		print(@);
+		return Null;
+	};
+	invoke(@);
+	return True;
+};

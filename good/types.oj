@@ -1,0 +1,32 @@
+/* All Types */
+register ts_int as Int;
+register ts_bool as Bool;
+register ts_char as Char;
+register ts_void as Void;
+register ts_obj as Obj |str_print, ts_bool|;
+register ts_func as Func Char |ts_bool|;
+
+func main Bool || {
+	add ts_int;
+	add ts_bool;
+	add ts_char;
+	add ts_void;
+	add ts_obj;
+	add ts_func;
+	// Proste Przypisania
+	.ts_int = 42;
+	.ts_bool = True;
+	.ts_char = 'X';
+	.ts_void = Null;
+	.ts_obj = construct str_print = 'A', ts_bool = False;
+	.ts_func = func Char |ts_bool| {
+		return 'A';
+	};
+	add str_print;
+	.str_print = .ts_char;
+	// Prezentacja funkcji
+	print(@);
+	.str_print = .ts_func(@);
+	print(@);
+	return True;
+};

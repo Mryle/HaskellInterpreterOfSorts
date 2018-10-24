@@ -1,0 +1,35 @@
+register ts_obj as Obj |str_print, base_counter|;
+
+func main Bool || {
+	add str_print;
+	add base_counter;
+	add base_errno; // adding error catcher
+	.str_print = 'X';
+	with @ |str_print, base_counter| {
+		.base_counter = 1/0; // throw arithmetic error
+		.str_print = '1';    // == Error catched here ==
+	};
+	print(@);
+	
+	.str_print = '2';
+	add ts_obj;
+	.ts_obj = construct str_print = 'X', base_counter = 0;
+	with .ts_obj |str_print, base_counter| {
+		print(@);
+		.base_counter = 1%0; //throw arithmetic error
+		print(@);
+	};
+	print(@); // error catched here
+	
+	remove base_errno; //No longer catching errors
+	.str_print = '3';
+	.ts_obj = construct str_print = 'X', base_counter = 0;
+	with .ts_obj |str_print, base_counter| {
+		print(@);
+		.base_counter = 1%0; //throw arithmetic error
+		print(@);
+	};
+	print(@); // error catched here
+	
+	return True;
+};

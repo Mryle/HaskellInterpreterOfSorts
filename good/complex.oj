@@ -1,0 +1,61 @@
+
+register ts_obj as Obj |base_counter, str_print|;
+
+/* Prezentacja Kill i spare */
+
+func killNotPrint Bool || {
+	kill;
+	add str_print;
+	.str_print = 'K';
+	print(@);
+	return False;
+};
+
+func spareNotPrint Bool || {
+	spare;
+	add str_print;
+	.str_print = 'K';
+	print(@);
+	return False;
+};
+
+/* Prezentacja repeat */
+
+func testRepeat Bool |base_counter, str_print| {
+	while .base_counter != 5 |str_print, base_counter| {
+		print(@);
+		.base_counter = .base_counter - 1;
+		if (.base_counter < 0) || {
+			return False;
+		} else || {};
+		repeat;
+		.base_counter = .base_counter + 2;
+	};
+	return True;
+};
+
+
+func main Bool || {
+	add ts_obj;
+	add str_print;
+	.str_print = '!';
+	
+	// Testy kill, spare
+	
+	.ts_obj = construct base_counter = 2, str_print = 'C';
+	killNotPrint(.ts_obj);
+	print(@);
+	.ts_obj = construct base_counter = 2, str_print = '5';
+	spareNotPrint(.ts_obj);
+	print(@);
+	
+	// Testy repeat
+	
+	.ts_obj.base_counter = 0 - 1;
+	//testRepeat(.ts_obj);
+	//print(@);
+	.ts_obj.base_counter = 4;
+	testRepeat(.ts_obj);
+	print(@);
+	return True;
+};

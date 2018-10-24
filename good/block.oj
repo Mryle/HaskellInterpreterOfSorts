@@ -1,0 +1,37 @@
+/*
+ Checking text operations in massive way
+ Also showing object loops
+*/
+
+func main Bool || {
+	// Creating 3 new character objects
+	// NumberNew - UsesObjects and creates new if needed
+	numberNew 97 to 100 |base_counter, str_print| {
+		.str_print = intToChar(@);
+		print(@);
+	};
+	add str_print;
+	.str_print = '\n';
+	print(@);
+	// Numbering character objects (found less than expected)
+	// number loop - just uses objects
+	number 97 to 120 |base_counter, str_print| {
+		.str_print = intToChar(@);
+		print(@);
+	};
+	print(@);
+	// each loop - goes over objects
+	each |base_counter, str_print| {
+		.str_print = 'X';
+		print(@);
+	};
+	print(@);
+	// For loop - simple enumerating objects
+	for |base_counter, str_print| {
+		.base_counter = .base_counter + 97;
+		.str_print = intToChar(@);
+		print(@);
+	};
+	print (@);
+	return True;
+};

@@ -1,0 +1,133 @@
+﻿USAGE:
+make
+./interpreter _source_file_
+
+1. Basic assumptions
+	Language is supposed to be simple imperative/object language with grammar similar to c. What i tried to achive was to make this language quite strict. All fields as well as data types have to be declared in advance.
+	
+	Similarly to java, all objects are passed by reference, and all simple values are passed by value.
+
+2. Implemented features (From imperative language specification)
+	1. Minimum 2 types of Values in expressions
+		Int, Bool, Char, Void as well as object and function types
+		(Presented in types.oj)
+	2. Arithmetic operations and equations
+		Standard arithmetic operation and boolean expressions
+		(Presented in simple.oj and various files)
+	3!. Functions, recursion
+		There are functions with one argument. All other variables are dynamically linked.
+		(Presented in types.oj)
+	4!. while, if (with/out else)
+		Nearly standard while and if/else implementation (5.
+		(while presented in block.oj)
+		(if presented in simple.oj)
+	5!. Output
+		There is function that allows to write put character to output.
+		(Presented in most of files)
+	6!. Pascal-like loop
+		Construction "number[new] _number_ to _number_" that allows such loops
+		(Presented in block.oj)
+	7!. string type, built-in functions for conversion between text and numbers
+		There is Char type that (used along with object types) allows to create text variables. There are functions to convert Char to Int and Int to Char.
+		String literals could be added in June.
+		(Presented in block.oj)
+	8!. Static typing
+		There is phase that is used to check types in program. It should be always terminating.
+	8. Allowing runtime errors, like division by zero
+		There is possibility to check for runtime exceptions. If object in current scope has base_errno interface, it is catching runtime exceptions. If exception is not caught in any of blocks, it can fail the execution of the program.
+		(presented in err.oj (in good and bad folders))
+	9!. Functions that returns value
+		Functions does return value. (In fact there are not that many possibilities that they do not need to return value).
+		(Presented in types.oj, simple.oj)
+	10!. Operations controlling flow of loop (or program) break, continue
+		There will be such operations that may change flow of program:
+		- kill - kills current object, will jump to first scope that has correct object.
+		- spare - quits current block
+		- repeat - repeats current block
+		(presented in complex.oj)
+	11!. functions as parameters
+		There is possibility for lambda functions in objects, that can be given as parameters to functions.
+		(Presented in function.oj)
+	12!. Records
+		Objects are a kind of records.
+		(Presented in most of files)
+	+. Comments
+		C-like (//, /* ... */)
+
+3. Types and operations
+3.1. Types:
+	Int - Integer (domyślnie 0)
+	Bool - Boolean value (domyślnie False)
+	Char - Single Character (Domyślnie ' ')
+	Void - Just Null
+	Obj [_interfaces_] - Object with at least given interfaces (domyślnie Null)
+	Func Typ [_interfaces_] - function returning type, that takes given object as argument. (domyślnie Null)
+3.2. Simple operations
+	# Declarations (top level)
+	register _interface_ as _typ_ - registers given interface
+	func _nazwa_ |_interfejsy_| |_interfejsy_| {} - registers global function with given name
+	# Operacje zwykłe
+	@ - Current object ( == "this" from java)
+	add _interface_ - adds interface to object
+	remove _interface_ - removes interface from object
+	local _nazwa_ as _typ_ - adds local interface. Can only by used in block in which it is created.
+	._interfejs_ - allows to assign or get value from object
+	construct _interfejs_ _wartość_ , ... - Constructs object with given interfaces and values
+	_obiekt_ = _wyrażenie_ - used to assign values
+	with _obiekt_ |_interfejsy_| {} - simple block operation (allows to gain more information about object)
+	# (Note): All loops first gathers object to loop over, then it loops over them. (Creating correct object in loop will not be enough to loop infinitely)
+	each |_interfejsy_| {} - loops over objects satisfying given interface
+	for |_interfejsy_| {} - loops over objects, giving them numbers
+	number _liczba_ to _liczba_ |_interfejsy_| {} - loops over objects, gives them numbers from given range. (Stops when there are no more objects or range ends).
+	numbernew _liczba_ to _liczba_ |_interfejsy_| {} - as number loop, but will create new objects, if there are not enough
+	# Operacje sterowanie przepływem.
+		kill - kills object, exits from block.
+		spare - exits current block
+		repeat - repeats current block
+		return _wyrażenie_ - returns value
+4. "standard library"
+4.1. Interfaces
+	base_counter : Int - overall int field. Is used by for/number/numbernew loops 
+	base_errno : Int - used to catch runtime exceptions. If this interface exits on current object, in case of exception it will catch it, and be filled with exception number.
+	base_prev : ~Obj|| - special. Allows to use fields from object from previous block.
+	str_actual : Char - Generic single character. To be used when Printing characters.
+	str_next : Obj [str_actual, str_next, str_prev] - next character (to construct strings)
+	str_prev : Obj [str_actual, str_next, str_prev] - previous character (to construct strings)
+4.2. Functions
+	str_print : Proc Obj |str_actual| - print character to output
+	str_toint : Func Int Obj |str_actual| - convert Char to Int
+	str_fromint : Func Char Obj |base_counter| - convert Int to Char
+
+5. Static typing checking and blocks of code
+5.1. static type checking
+	Nearly every interface can take part int normal type checking. Exception to
+this rule would be base_prev interface, which does not have a concrete
+interface. Instead type checker tries to set its type using every possible
+option. Sometimes (execution of global function) it is impossible to get
+interface of base_prev. In that case its type if the minimal object type
+(which is Obj ||)
+5.2 Code Blocks
+	Every block of code (as it is visible in grammar) needs to have specified
+interface of object. It is used as a minimal interface of object that is
+allowed to enter this block. If object does not have specified interfaces it
+result in WrongType error. Using this construction it is possible to safely
+use fields of objects even thoug we are unsure of object's interfaces. (To do
+that you need to enclose object in with block)
+
+5. Słówko o statycznym typowaniu (i blokach kodu)
+5.1. Statyczne typowanie
+	Dzięki temu że typ każdego pola, oraz aktualnego obiektu jest jawny możliwe jest zrobienie statycznego typowanie. wyjątkiem od tej reguły jest pole/interfejs base_prev. Interfejs ten ma typ przynajmniej Obj ||, lecz często możliwe jest ustalenie więcej o obiekcie z poprzedniego bloku (np. kiedy jest to blok wewnątrz innego bloku kodu). Wyjątkiem od tej reguły są wywołania funkcji. Wtedy nie jest możliwe statyczne ustalenie typu, stąd jest on minimalny (tj Obj ||)
+5.2 Bloku kodu
+	Jak można zauważyć w gramatyce, każdy blok kodu trzeba uściślić podając Interfejsy. Nie jest niezbędne żeby podane interfejsy zawierały się w interfejsach obiektu który będzie użyty w bloku, jednak każdy obiekt który będzie użyty w bloku musi spełniać przynajmniej podane interfejsy.
+	Dzięki temu korzystając z bloku 'with' możliwe jest rozszerzenie wiedzy o obiekcie bez problemów ze statycznym typowaniem. Wadą takiego rozwiązania jest możliwość że przekazany obiekt nie spełnia danych interfejsów, jednak w tym przypadku zachowanie programu jest określone. (sterowanie ominie taki blok, oraz zostanie ustawiony odpowiedni kod błędu)
+
+6. Kody błędu
+W programie (w chwili deklaracji) przewidziane są następujące kody błędu:
+0 - brak kodu błędu (domyślna wartość typu Int)
+1 - Wrong type (should not happen, due to static typing, but there is
+possibility that something will be missing by it)
+2 - Arithmetic (Division/Mod by 0)
+3 - NoObject (Mostly trying to get value ot of null. Happens internally every
+time when we try to get object but it does not exist)
+5 - NoReturn - Invoked function did not return a value.
+127 - other unspecified error.

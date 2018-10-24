@@ -1,0 +1,103 @@
+-- Some Language
+
+entrypoints Program;
+
+Program.			Program ::= [Declaration];
+
+token Name (letter (letter | '_' | digit)*) ;
+
+-- Definicje typów
+Interface.			Interface_list ::= Name ;
+
+separator Interface_list "," ;
+
+InterObj.		Interface_specifier ::= "|" [Interface_list] "|" ;
+
+TypeInt.		TypeNFunc ::= "Int" ;
+TypeBool.		TypeNFunc ::= "Bool" ;
+TypeChar.		TypeNFunc ::= "Char" ;
+TypeVoid.		TypeNFunc ::= "Void" ;
+TypeObj.		TypeNFunc ::= "Obj" Interface_specifier ;
+
+TypeNFunc.		TypeAll ::= TypeNFunc ;
+TypeFunc.		TypeAll ::= "Func" TypeNFunc Interface_specifier ;
+
+-- Deklaracje
+
+DeclType.		Declaration ::= "register" Name "as" TypeAll ;
+DeclFunc.		Declaration ::= "func" Name TypeNFunc Interface_specifier "{" [Stmt] "}" ;
+
+separator Declaration ";" ;
+
+-- Definicje pól
+
+FieldSingle.	Field ::= "." Name ;
+FieldMany.		Field ::= "." Name Field ;
+
+ObjCurr.		Object ::= "@" ;
+ObjField.		Object ::= Field ;
+
+ConsInter.		Construct_Interface ::= Name "=" Exp ;
+
+separator Construct_Interface "," ;
+
+-- Wyrażenia
+
+ExpLess.		Exp ::= Exp "<" Exp1 ;
+ExpMore.		Exp ::= Exp ">" Exp1 ;
+ExpLessE.		Exp ::= Exp "<=" Exp1 ;
+ExpMoreE.		Exp ::= Exp ">=" Exp1 ;
+ExpEq.			Exp ::= Exp "==" Exp1 ;
+ExpNEq.			Exp ::= Exp "!=" Exp1 ;
+ExpObjEq.		Exp ::= Exp "===" Exp1 ;
+ExpObjNEq.		Exp ::= Exp "!==" Exp1 ;
+ExpAdd.			Exp1 ::= Exp1 "+" Exp2 ;
+ExpSub.			Exp1 ::= Exp1 "-" Exp2 ;
+ExpMul.			Exp2 ::= Exp2 "*" Exp3 ;
+ExpDiv.			Exp2 ::= Exp2 "/" Exp3 ;
+ExpMod.			Exp2 ::= Exp2 "%" Exp3 ;
+ExpBracket.		Exp3 ::= "(" Exp ")" ;
+ExpConstruct.	Exp4 ::= "construct" [Construct_Interface] ;
+ExpFunc.		Exp4 ::= Name "(" Object ")" ;
+ExpObjFunc.		Exp4 ::= Object "(" Object ")" ;
+ExpNegate.		Exp4 ::= "!" Exp ;
+ExpInt.			Exp5 ::= Integer ;
+ExpObj.			Exp5 ::= Object ;
+ExpTrue.		Exp5 ::= "True" ;
+ExpFalse.		Exp5 ::= "False" ;
+ExpNull.		Exp5 ::= "Null" ;
+ExpChar.		Exp5 ::= Char ;
+ExpLambda.		Exp6 ::= "func" TypeNFunc Interface_specifier "{" [Stmt] "}" ;
+
+coercions Exp 6 ;
+
+
+
+--Instrukcje
+--Instrukcje wbudowane
+StmtAdd.		Stmt ::= "add" Name ;
+StmtRemove.		Stmt ::= "remove" Name ;
+StmtLocal.		Stmt ::= "local" Name "as" TypeAll ;
+StmtConstruct.	Stmt ::= "construct" [Construct_Interface] ;
+StmtKill.		Stmt ::= "kill" ;
+StmtSpare.		Stmt ::= "spare" ;
+StmtRepeat.		Stmt ::= "repeat" ;
+StmtReturn.		Stmt ::= "return" Exp ;
+StmtSkip.		Stmt ::= "rest" ;
+--Instrukcje pozostałe
+StmtAssgn.		Stmt ::= Field "=" Exp ;
+StmtFunc.		Stmt ::= Name "(" Object ")" ;
+StmtObjFunc.	Stmt ::= Field "(" Object ")" ;
+--Bloki
+StmtWith.		Stmt ::= "with" Object Interface_specifier "{" [Stmt] "}" ;
+StmtEach.		Stmt ::= "each" Interface_specifier "{" [Stmt] "}" ;
+StmtFor.		Stmt ::= "for" Interface_specifier "{" [Stmt] "}" ;
+StmtNumb.		Stmt ::= "number" Integer "to" Integer Interface_specifier "{" [Stmt] "}" ;
+StmtNumbNew.		Stmt ::= "numberNew" Integer "to" Integer Interface_specifier "{" [Stmt] "}" ;
+StmtWhile.		Stmt ::= "while" Exp Interface_specifier "{" [Stmt] "}" ;
+StmtIfElse.		Stmt ::= "if" Exp Interface_specifier "{" [Stmt] "}" "else" Interface_specifier "{" [Stmt] "}" ;
+
+separator Stmt ";" ;
+
+comment "//" ;
+comment "/*" "*/" ;

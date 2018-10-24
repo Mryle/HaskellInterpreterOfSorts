@@ -1,0 +1,7 @@
+NonParsable.
+// /\ This wont parse
+
+register ts_obj as Obj |str_print, base_counter|;
+
+func main Bool || {
+};
